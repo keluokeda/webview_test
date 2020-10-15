@@ -2,13 +2,10 @@ package com.icarguard.webview_test
 
 import android.content.Intent
 import android.net.Uri
-import android.net.http.SslError
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.webkit.SslErrorHandler
 import android.webkit.WebView
-import android.webkit.WebViewClient
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -35,7 +32,6 @@ class MainActivity : AppCompatActivity() {
             useWideViewPort = true
             loadWithOverviewMode = true
 
-//            userAgentString = web_view.settings.userAgentString.toString() + " Ichebao/V2"
         }
 
 
@@ -62,37 +58,36 @@ class MainActivity : AppCompatActivity() {
                             .setPositiveButton("知道了", null).show()
                     }
                     return true
+                } else if (url.startsWith("geo:")) {
+
+                    val latitude = url.substring(url.indexOf(":") + 1, url.indexOf(","))
+
+                    val longitude = url.substring(url.indexOf(",") + 1, url.indexOf("?"))
+
+
+                    return true
                 }
-
-//                view.loadUrl(url)
-
                 return super.shouldOverrideUrlLoading(view, url)
             }
         }
 
         //获取经纬度
-        web_view.registerHandler("getLocationFromAppBridge") { data, callback ->
+        web_view.registerHandler("getMeLocation") { data, callback ->
 
             val json = JSONObject()
 
             json.put("longitude", .0)
             json.put("latitude", .0)
-            json.put("status", true)
+            json.put("success", true)
             callback.onCallBack(json.toString())
         }
 
         //导航
-        web_view.registerHandler("openNavigatorFromAppBridge") { data, callback ->
+        web_view.registerHandler("gasdaohang") { data, callback ->
             val json = JSONObject(data)
-            val name = json.optString("gasStationName")
+            val name = json.optString("gasname")
             val latitude = json.optDouble("latitude")
             val longitude = json.optDouble("longitude")
-
-            val result = JSONObject()
-            result.put("status", true)
-            callback.onCallBack(result.toString())
-
-
         }
 
 
